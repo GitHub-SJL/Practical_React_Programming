@@ -99,3 +99,124 @@ button 컴포넌트를 만들고 다른 js파일에 불러와서 사용하여 �
 
     npx webpeck을 통해
     dist 폴더 안에 Button.js와 index.js를 합친 main.js로 번들링이 완료
+
+
+## 1.3 create-react-app으로 시작하기
+    create-react-app은 리액트로 웹 애플리케이션을 만들기 위한 환경을 제공
+    장점
+    1. 개발 환경을 자동으로 구축
+        -바벨,웹팩
+        -테스트 시스템
+        -HRM(hot-module-replacement)
+        -ES6+문법
+        -CSS 후처리
+    2. 해결법이 여러가지 일때, 합리적인 선택
+        - 각각의 장단점을 공부하기에는 시간이 많이 소요
+        - 합리적인 선택을 했을 확률이 높다.
+
+
+### 1.3.1 create-react-app 사용해 보기
+```
+    npx create-react-app . 
+    - 현재폴더에 리액트 설치 해줌    
+
+    HMR을 통해 수정된 부분을 바로 확인 가능
+    
+    index.js와 연결된 모든 JS파일, css파일은 src폴더 밑에 있어야함
+    -> src폴더 바깥에 있는 파일을 import하면 실패
+
+    index.html에서 참조하는 파일은 public 폴더 밑에 있어야 한다.
+    -> js,css파일을 script태그, Link태그를 이용하여 연결
+    
+    index.html 직접연결보단 src폴더내에서 import를 통해 연결 지향
+    -> JS파일,CSS파일의 경우 빌드 시 자동으로 압축되기 때문
+
+    이미지,폰트도 src폴더밑에서 포함시키기
+    -> 웹팩에서 해시값을 통해 url을 생성
+    -> 브라우저 캐싱 효과
+
+    페이지별로 제목을 다르게 줘야할 경우
+    -> 검색 엔진 최적화가 필요없다면 react-helmet과 같은 패키지 사용
+    -> 필요하다면 Next.js 고려
+
+    PWA는 오프라인에서도 동작하는 웹 애플리케이션을 만들기 위한 기술
+    -> 기본적으로 꺼져 있음
+    
+```
+
+### 1.3.2 주요 명령어 알아보기
+    개발 모드로 실행하기
+    - npm start
+        -> HMR이 동작함
+    - https로 실행하는 옵션 제공
+        -> 자체 서명된 인증서 제공
+        window: set HTTPS=true && npm start
+        mac: HTTPS=true npm start
+    빌드하기
+    - npm run build
+        -> 배포 환경에서 사용할 파일 만들어줌
+    
+    - css파일 저장 경로
+        -> build/static/css/main.{해시값}.chunk.css
+        -> 여러개의 css파일을 import해도 모두 위의 경로에 저장
+    - 리소스 저장 경로(이미지,폰트)
+        -> build/static/media
+        -> 10kb 보다 작으면 위 경로가 아닌 data url 형식으로 JS파일에 포함
+
+    테스트 코드 실행
+    - npm test
+
+    설정 파일 추출하기
+    - npm run eject
+        -> 숨겨져있던 CRA의 내부 설정 파일이 밖으로 노출
+        -> 리액트 툴체인에 익숙한 사람이아니라면 비추천
+    - react-scripts 프로젝트를 fork해서 나만의 스크립트를 만들기
+    - react-app-rewired 패키지 사용
+
+    - 버전이 올라갈때 변경된 내용을 쉽게 적용할 수 없다는 단점
+
+### 1.3.3 자바스크립트 지원 범위
+    ES6의 모든 기능을 지원
+    - 지수 연산자
+    - async await
+    - rest opertator, spread operator
+    - dynamic import
+    - class field
+    - jsx 문법
+    - 타입스크립트, 플로 타입 시스템
+
+    기본설정에서는 아무런 폴리필도 포함하지않음
+
+    폴리필
+    - 브라우저나 자바스크립트 엔진에서 원래 지원하지 않는 기능을 스크립트를 통해 구현하는 것
+    - 객체나 함수를 주입할 때, 그것이 현재 환경에 이미 존재하는지 검사해야 한다 
+        -> 만약 해당 기능이 이미 환경에서 지원되고 있다면 폴리필을 사용할 필요가 없다.
+        -> 이미 존재하는 기능 위에 똑같은 기능을 덮어쓰면 에러 발생 가능성 있다.
+
+### 1.3.4 코드 분할하기
+    사용자에게 필요한 양의 코드만 내려줌
+    - 코드 분할 하지않으면 전체 코드를 한번에 내려주기 때문에 첫 페이지가 뜨는 시간이 오래 걸린다.
+
+### 1.3.5 환경 변수 사용하기
+    빌드 시점에 환경 변수를 코드로 전달
+    process.env.{환경 변수 이름}
+
+    NODE_ENV 환경 변수
+    CRA는 NODE_ENV를 기본으로 제공
+    - npm start : development 환경
+    - npm test : test 환경
+    - npm run build : production 환경       
+
+    기타 환경 변수 이용하기
+    react는 REACT_APP_접두사를 붙여야함
+    process.env.REACT_APP_ 
+    
+    .env.{환경이름}
+    - .env파일을 이용하여 환경별 환경변수를 관리
+
+    autoprefixer
+    - CSS를 작성할 때 브라우저 간의 호환성을 위해 필요한 벤더 접두사(vendor prefix)를 자동으로 추가해주는 툴
+    - build 실행 후 css파일을 열어보면 벤더 접두사가 추가되어있다.
+    
+
+
